@@ -39,6 +39,9 @@ public class VoyageController {
     @Autowired
     private VoyageDetailsService voyageDetailsService;
 
+    @Autowired
+    private BilletService billetService;
+
     @GetMapping("")
     public String voyages(HttpSession session, Model model,
                          @RequestParam(required = false) Integer idTrajet,
@@ -171,12 +174,12 @@ public class VoyageController {
                              @RequestParam(required = false) String nomComplet,
                              @RequestParam(required = false) String telephone,
                              @RequestParam(required = false) Integer idCategorieClient,
-                             @RequestParam("selectedPlaces") int[] selectedPlaces,
+                             @RequestParam("selectedPlaces") Integer[] selectedPlaces,
                              @RequestParam String clientType) {
         if (session.getAttribute("admin") == null) {
             return "redirect:/admin/login";
         }
-
+//verifier si le client est nouveau ou existant 
         Client client;
         if ("new".equals(clientType)) {
             client = new Client();
@@ -198,9 +201,48 @@ public class VoyageController {
             }
         }
 
+        // Créer les billets pour chaque place sélectionnée
+        Voyage voyage = voyageService.getVoyageById(id).orElse(null);
+        if (voyage == null) {
+            return "redirect:/voyages";
+        }
+
+        BigDecimal totalAmount = BigDecimal.ZERO;
+        int bookedPlaces = 0;
+
+        for (Integer placeId : selectedPlaces) {
+            Place place = voyageService.getPlacesForVoyage(id).stream()
+                    .filter(p -> p.getIdPlace().equals(placeId))
+                    .findFirst().orElse(null);
+
+            if (place != null && !place.isReserved()) {
+                Billet billet = new Billet();
+                billet.setClient(client);
+                billet.setVoyage(voyage);
+                billet.setPlace(place);
+
+                // Calculer le prix pour cette place et ce client
+                BigDecimal prix = voyageService.getPrixForPlaceAndClient(
+                    voyage.getTrajet(),
+                    place.getCategoriePlace(),
+                    client.getCategorieClient()
+                );
+                billet.setMontantTotal(prix);
+                totalAmount = totalAmount.add(prix);
+
+                // Sauvegarder le billet
+                billetService.saveBillet(billet);
+
+                // Mettre à jour le statut de la place à "Reservee"
+                voyageService.reserverPlace(placeId);
+
+                bookedPlaces++;
+            }
+        }
+
         // TODO: Create reservation/billet logic here
         // For now, just redirect with success
-        session.setAttribute("successMessage", "Réservation effectuée avec succès pour " + selectedPlaces.length + " place(s)!");
+        session.setAttribute("successMessage", "Réservation effectuée avec succès pour " + bookedPlaces + " place(s)! Montant total: " + totalAmount + " Ar");
         return "redirect:/voyages/" + id + "/details";
     }
 

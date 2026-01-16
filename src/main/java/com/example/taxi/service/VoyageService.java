@@ -27,6 +27,11 @@ public class VoyageService {
     @Autowired
     private TarifClientRepository tarifClientRepository;
 
+    @Autowired
+    private StatutPlaceRepository statutPlaceRepository;
+
+
+
 
     public List<Voyage> getAllVoyages() {
         return voyageRepository.findAllWithDetails();
@@ -81,5 +86,18 @@ public class VoyageService {
         }
         // Retourner le prix par défaut si pas de tarif spécifique pour la catégorie
         return tarif.getPrix();
+    }
+
+    public void reserverPlace(Integer placeId) {
+        Optional<Place> placeOpt = placeRepository.findById(placeId);
+        if (placeOpt.isPresent()) {
+            Place place = placeOpt.get();
+            // Trouver le statut "Reservee" (id = 2)
+            Optional<StatutPlace> statutReservee = statutPlaceRepository.findById(2);
+            if (statutReservee.isPresent()) {
+                place.setStatutPlace(statutReservee.get());
+                placeRepository.save(place);
+            }
+        }
     }
 }

@@ -75,7 +75,8 @@
                         <div class="seat-grid">
                             <c:forEach var="place" items="${places}">
                                 <div class="seat ${place.reserved ? 'reserved' : 'available'} ${place.categorie == 'VIP' ? 'vip' : place.categorie == 'Premium' ? 'premium' : 'standard'}"
-                                     data-place="${place.numeroPlace}">
+                                     data-place="${place.numeroPlace}"
+                                     data-id="${place.idPlace}">
                                     ${place.numeroPlace}
                                 </div>
                             </c:forEach>
@@ -215,15 +216,16 @@ function toggleSeat(placeNumber) {
         return;
     }
 
-    const index = selectedSeats.indexOf(placeNumber);
+    const seatId = seatElement.getAttribute('data-id');
+    const index = selectedSeats.indexOf(seatId);
     if (index > -1) {
         selectedSeats.splice(index, 1);
         seatElement.classList.remove('selected');
-        console.log('Seat deselected:', placeNumber);
+        console.log('Seat deselected:', placeNumber, 'ID:', seatId);
     } else {
-        selectedSeats.push(placeNumber);
+        selectedSeats.push(seatId);
         seatElement.classList.add('selected');
-        console.log('Seat selected:', placeNumber);
+        console.log('Seat selected:', placeNumber, 'ID:', seatId);
     }
 
     updateSelectedSeats();
@@ -236,7 +238,12 @@ function updateSelectedSeats() {
     if (selectedSeats.length === 0) {
         selectedSpan.textContent = 'Aucune';
     } else {
-        selectedSpan.textContent = selectedSeats.sort((a,b) => a-b).join(', ');
+        // Convert IDs back to place numbers for display
+        const selectedPlaceNumbers = selectedSeats.map(seatId => {
+            const seatElement = document.querySelector(`[data-id="${seatId}"]`);
+            return seatElement ? seatElement.getAttribute('data-place') : seatId;
+        });
+        selectedSpan.textContent = selectedPlaceNumbers.sort().join(', ');
     }
 
     // Add hidden inputs for selected seats
@@ -244,11 +251,11 @@ function updateSelectedSeats() {
     // Remove existing hidden inputs
     form.querySelectorAll('input[name="selectedPlaces"]').forEach(input => input.remove());
     // Add new ones
-    selectedSeats.forEach(seat => {
+    selectedSeats.forEach(seatId => {
         const input = document.createElement('input');
         input.type = 'hidden';
         input.name = 'selectedPlaces';
-        input.value = seat;
+        input.value = seatId;
         form.appendChild(input);
     });
 
@@ -351,11 +358,9 @@ function calculateTotal() {
     const allSeats = document.querySelectorAll('.seat');
     const selectedPlacesData = [];
 
-    selectedSeats.forEach(seatNumber => {
-        // Find the seat element and get its category
-        const seatElement = Array.from(allSeats).find(seat =>
-            seat.getAttribute('data-place') === seatNumber
-        );
+    selectedSeats.forEach(seatId => {
+        // Find the seat element by ID
+        const seatElement = document.querySelector(`[data-id="${seatId}"]`);
         if (seatElement) {
             // Determine category from CSS classes
             let categorie = 'Standard'; // default
@@ -365,7 +370,7 @@ function calculateTotal() {
                 categorie = 'Premium';
             }
             selectedPlacesData.push({
-                numero: seatNumber,
+                numero: seatElement.getAttribute('data-place'),
                 categorie: categorie
             });
         }

@@ -1,5 +1,6 @@
 /home/elyance/Documents/S5/Mme Baovola/taxi_brousse/src/main/java/com/example/taxi/TaxiApplication.java
 /home/elyance/Documents/S5/Mme Baovola/taxi_brousse/src/main/java/com/example/taxi/controller/AdminController.java
+/home/elyance/Documents/S5/Mme Baovola/taxi_brousse/src/main/java/com/example/taxi/controller/BilletController.java
 /home/elyance/Documents/S5/Mme Baovola/taxi_brousse/src/main/java/com/example/taxi/controller/HomeController.java
 /home/elyance/Documents/S5/Mme Baovola/taxi_brousse/src/main/java/com/example/taxi/controller/VoyageController.java
 /home/elyance/Documents/S5/Mme Baovola/taxi_brousse/src/main/java/com/example/taxi/model/Admin.java
@@ -37,6 +38,7 @@
 /home/elyance/Documents/S5/Mme Baovola/taxi_brousse/src/main/java/com/example/taxi/repository/VoyageDetailsRepository.java
 /home/elyance/Documents/S5/Mme Baovola/taxi_brousse/src/main/java/com/example/taxi/repository/VoyageRepository.java
 /home/elyance/Documents/S5/Mme Baovola/taxi_brousse/src/main/java/com/example/taxi/service/AdminService.java
+/home/elyance/Documents/S5/Mme Baovola/taxi_brousse/src/main/java/com/example/taxi/service/BilletService.java
 /home/elyance/Documents/S5/Mme Baovola/taxi_brousse/src/main/java/com/example/taxi/service/ClientService.java
 /home/elyance/Documents/S5/Mme Baovola/taxi_brousse/src/main/java/com/example/taxi/service/TarifService.java
 /home/elyance/Documents/S5/Mme Baovola/taxi_brousse/src/main/java/com/example/taxi/service/TrajetService.java
