@@ -18,12 +18,56 @@
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">Liste des Billets</h3>
-                    <div class="card-tools">
-                        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#filterModal">
-                            <i class="fas fa-filter"></i> Filtres
-                        </button>
-                    </div>
                 </div>
+
+                <!-- Filter Form -->
+                <div class="card-header border-0">
+                    <form method="GET" action="<c:url value='/billet/list'/>" class="form-inline">
+                        <div class="row w-100">
+                            <div class="col-md-3">
+                                <div class="form-group mb-2">
+                                    <label for="idTrajet" class="sr-only">Trajet</label>
+                                    <select class="form-control form-control-sm" id="idTrajet" name="idTrajet">
+                                        <option value="">Tous les trajets</option>
+                                        <c:forEach var="trajet" items="${trajets}">
+                                            <option value="${trajet.idTrajet}" ${param.idTrajet == trajet.idTrajet ? 'selected' : ''}>
+                                                ${trajet.gareDepart.ville.libelle} → ${trajet.gareArrivee.ville.libelle}
+                                            </option>
+                                        </c:forEach>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group mb-2">
+                                    <label for="idVehicule" class="sr-only">Véhicule</label>
+                                    <select class="form-control form-control-sm" id="idVehicule" name="idVehicule">
+                                        <option value="">Tous les véhicules</option>
+                                        <c:forEach var="vehicule" items="${vehicules}">
+                                            <option value="${vehicule.idVehicule}" ${param.idVehicule == vehicule.idVehicule ? 'selected' : ''}>
+                                                ${vehicule.immatriculation} - ${vehicule.vehiculeModele.modele}
+                                            </option>
+                                        </c:forEach>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group mb-2">
+                                    <label for="date" class="sr-only">Date</label>
+                                    <input type="date" class="form-control form-control-sm" id="date" name="date" value="${param.date}">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <button type="submit" class="btn btn-primary btn-sm mr-2">
+                                    <i class="fas fa-search"></i> Filtrer
+                                </button>
+                                <a href="<c:url value='/billet/list'/>" class="btn btn-secondary btn-sm">
+                                    <i class="fas fa-times"></i> Réinitialiser
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
                 <div class="card-body">
 
                     <!-- Statistics Cards -->
@@ -144,56 +188,4 @@
                             </tbody>
                         </table>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Filter Modal -->
-<div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="filterModalLabel">Filtrer les Billets</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <form method="GET" action="<c:url value='/billet/list'/>">
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="idTrajet">Trajet</label>
-                        <select class="form-control" id="idTrajet" name="idTrajet">
-                            <option value="">Tous les trajets</option>
-                            <c:forEach var="trajet" items="${trajets}">
-                                <option value="${trajet.idTrajet}" ${param.idTrajet == trajet.idTrajet ? 'selected' : ''}>
-                                    ${trajet.gareDepart.ville.libelle} → ${trajet.gareArrivee.ville.libelle}
-                                </option>
-                            </c:forEach>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="idVehicule">Véhicule</label>
-                        <select class="form-control" id="idVehicule" name="idVehicule">
-                            <option value="">Tous les véhicules</option>
-                            <c:forEach var="vehicule" items="${vehicules}">
-                                <option value="${vehicule.idVehicule}" ${param.idVehicule == vehicule.idVehicule ? 'selected' : ''}>
-                                    ${vehicule.immatriculation} - ${vehicule.vehiculeModele.modele}
-                                </option>
-                            </c:forEach>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="date">Date</label>
-                        <input type="date" class="form-control" id="date" name="date" value="${param.date}">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
-                    <button type="submit" class="btn btn-primary">Appliquer les filtres</button>
-                </div>
-            </form>
-        </div>
-    </div>
 </div>

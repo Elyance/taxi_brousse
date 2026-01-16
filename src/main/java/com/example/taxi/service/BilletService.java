@@ -16,7 +16,7 @@ public class BilletService {
     private BilletRepository billetRepository;
 
     public List<Billet> getAllBillets() {
-        return billetRepository.findAll();
+        return billetRepository.findAllWithDetails();
     }
 
     public Optional<Billet> getBilletById(Integer id) {
