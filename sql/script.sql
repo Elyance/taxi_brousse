@@ -182,3 +182,14 @@ CREATE TABLE details_commande(
    FOREIGN KEY(id_commande) REFERENCES commande(id_commande)
 );
 
+-- Vue pour les tarifs par trajet
+CREATE VIEW tarif_details AS
+SELECT 
+    t.id_tarif,
+    tr.id_trajet,
+    cp.libelle AS categorie_place,
+    t.prix
+FROM tarif t
+JOIN trajet tr ON t.id_trajet = tr.id_trajet
+JOIN categorie_place cp ON t.id_categorie_place = cp.id_categorie_place;
+

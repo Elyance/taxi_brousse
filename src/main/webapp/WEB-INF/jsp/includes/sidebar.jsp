@@ -275,7 +275,7 @@
                 </span>
             </a>
             <ul class="sidebar-submenu">
-                <li><a href="<c:url value='/voyage/list'/>" class="sidebar-submenu-link"><i class="fas fa-list"></i> Liste</a></li>
+                <li><a href="<c:url value='/voyages'/>" class="sidebar-submenu-link"><i class="fas fa-list"></i> Liste</a></li>
                 <li><a href="<c:url value='/voyage/create'/>" class="sidebar-submenu-link"><i class="fas fa-plus"></i> Saisie</a></li>
             </ul>
         </li>
