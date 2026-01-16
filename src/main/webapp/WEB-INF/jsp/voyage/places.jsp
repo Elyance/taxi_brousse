@@ -85,14 +85,6 @@
                         </div>
                     </div>
 
-                    <!-- Selected Places Summary -->
-                    <div id="selectedPlacesSummary" style="display: none;">
-                        <hr>
-                        <h5>Total de votre sélection</h5>
-                        <div class="alert alert-info">
-                            <h4 class="alert-heading">Montant total: <span id="grandTotal">0.00 €</span></h4>
-                        </div>
-                    </div>
 
                     <!-- Client Form -->
                     <div id="clientFormSection" style="display: none;">
@@ -260,8 +252,6 @@ function updateSelectedSeats() {
         form.appendChild(input);
     });
 
-    // Update places summary and client form
-    updatePlacesSummary();
     toggleClientForm();
 }
 
@@ -305,20 +295,7 @@ function updateTarifsForClient() {
             console.error('Error fetching tarifs:', error);
         });
 }
-function updatePlacesSummary() {
-    const summarySection = document.getElementById('selectedPlacesSummary');
-    const grandTotalSpan = document.getElementById('grandTotal');
 
-    if (selectedSeats.length === 0) {
-        summarySection.style.display = 'none';
-        return;
-    }
-
-    summarySection.style.display = 'block';
-
-    // Calculer le total avec les prix actuels
-    calculateTotal();
-}
 
 function updateBookButton() {
     const bookBtn = document.getElementById('bookBtn');
