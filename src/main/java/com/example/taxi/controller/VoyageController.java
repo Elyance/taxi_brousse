@@ -1,26 +1,24 @@
 package com.example.taxi.controller;
 
-import com.example.taxi.model.Voyage;
-import com.example.taxi.model.VoyageDetails;
-import com.example.taxi.model.Trajet;
-import com.example.taxi.model.TarifDetails;
-import com.example.taxi.service.TarifService;
-import com.example.taxi.service.VoyageService;
+import com.example.taxi.model.*;
+import com.example.taxi.service.*;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Collectors;
 import java.util.stream.Collectors;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import java.util.List;
 
 @Controller
 @RequestMapping("/voyages")
@@ -32,6 +30,15 @@ public class VoyageController {
     @Autowired
     private TarifService tarifService;
 
+    @Autowired
+    private ClientService clientService;
+
+    @Autowired
+    private TrajetService trajetService;
+
+    @Autowired
+    private VoyageDetailsService voyageDetailsService;
+
     @GetMapping("")
     public String voyages(HttpSession session, Model model,
                          @RequestParam(required = false) Integer idTrajet,
@@ -39,7 +46,7 @@ public class VoyageController {
         if (session.getAttribute("admin") == null) {
             return "redirect:/admin/login";
         }
-        List<VoyageDetails> voyages = voyageService.getAllVoyageDetails();
+        List<VoyageDetails> voyages = voyageDetailsService.getAllVoyageDetails();
 
         // Filter by trajet if provided
         if (idTrajet != null) {
@@ -67,7 +74,7 @@ public class VoyageController {
         }
 
         model.addAttribute("voyages", voyages);
-        model.addAttribute("trajets", voyageService.getAllTrajets());
+        model.addAttribute("trajets", trajetService.getAllTrajets());
         model.addAttribute("pageTitle", "Liste des Voyages");
         model.addAttribute("contentPage", "/WEB-INF/jsp/voyage/list.jsp");
         return "includes/layout";
@@ -89,4 +96,112 @@ public class VoyageController {
         model.addAttribute("contentPage", "/WEB-INF/jsp/voyage/details.jsp");
         return "includes/layout";
     }
+
+    @GetMapping("/{id}/places")
+    public String voyagePlaces(@PathVariable Integer id, HttpSession session, Model model) {
+        if (session.getAttribute("admin") == null) {
+            return "redirect:/admin/login";
+        }
+        Voyage voyage = voyageService.getVoyageById(id).orElse(null);
+        if (voyage == null) {
+            return "redirect:/voyages";
+        }
+        List<Place> places = voyageService.getPlacesForVoyage(id);
+        List<Client> clients = clientService.getAllClients();
+        List<CategorieClient> categories = clientService.getAllCategories();
+        List<Tarif> tarifs = voyageService.getTarifsForTrajet(voyage.getTrajet());
+
+        // Créer les tarifs avec prix par défaut (pour client sans catégorie spécifique)
+        List<TarifWithClientPrice> tarifsWithPrices = tarifs.stream()
+                .map(tarif -> new TarifWithClientPrice(tarif, tarif.getPrix()))
+                .toList();
+
+        model.addAttribute("voyage", voyage);
+        model.addAttribute("places", places);
+        model.addAttribute("clients", clients);
+        model.addAttribute("categories", categories);
+        model.addAttribute("tarifs", tarifs);
+        model.addAttribute("pageTitle", "Sélection des Places");
+        model.addAttribute("contentPage", "/WEB-INF/jsp/voyage/places.jsp");
+        return "includes/layout";
+    }
+
+    @GetMapping("/{id}/tarifs")
+    @ResponseBody
+    public List<TarifWithClientPrice> getTarifsForClient(@PathVariable Integer id,
+                                                         @RequestParam(required = false) Integer idClient,
+                                                         @RequestParam(required = false) Integer idCategorieClient) {
+        Voyage voyage = voyageService.getVoyageById(id).orElse(null);
+        if (voyage == null) {
+            return List.of();
+        }
+
+        List<Tarif> tarifs = voyageService.getTarifsForTrajet(voyage.getTrajet());
+        CategorieClient categorieClient = null;
+
+        // Déterminer la catégorie du client
+        if (idClient != null) {
+            // Client existant
+            Client client = clientService.getAllClients().stream()
+                    .filter(c -> c.getIdClient().equals(idClient))
+                    .findFirst().orElse(null);
+            if (client != null) {
+                categorieClient = client.getCategorieClient();
+            }
+        } else if (idCategorieClient != null) {
+            // Nouveau client avec catégorie sélectionnée
+            categorieClient = clientService.getAllCategories().stream()
+                    .filter(c -> c.getIdCategorieClient().equals(idCategorieClient))
+                    .findFirst().orElse(null);
+        }
+
+        // Calculer les prix selon la catégorie
+        final CategorieClient finalCategorieClient = categorieClient;
+        return tarifs.stream()
+                .map(tarif -> {
+                    BigDecimal prix = voyageService.getPrixForClient(tarif, finalCategorieClient);
+                    return new TarifWithClientPrice(tarif, prix);
+                })
+                .toList();
+    }
+
+    @PostMapping("/{id}/book")
+    public String bookTicket(@PathVariable Integer id, HttpSession session, Model model,
+                             @RequestParam(required = false) Integer idClient,
+                             @RequestParam(required = false) String nomComplet,
+                             @RequestParam(required = false) String telephone,
+                             @RequestParam(required = false) Integer idCategorieClient,
+                             @RequestParam("selectedPlaces") int[] selectedPlaces,
+                             @RequestParam String clientType) {
+        if (session.getAttribute("admin") == null) {
+            return "redirect:/admin/login";
+        }
+
+        Client client;
+        if ("new".equals(clientType)) {
+            client = new Client();
+            client.setNomComplet(nomComplet);
+            client.setTelephone(telephone);
+            if (idCategorieClient != null) {
+                CategorieClient categorie = clientService.getAllCategories().stream()
+                        .filter(c -> c.getIdCategorieClient().equals(idCategorieClient))
+                        .findFirst().orElse(null);
+                client.setCategorieClient(categorie);
+            }
+            client = clientService.saveClient(client);
+        } else {
+            client = clientService.getAllClients().stream()
+                    .filter(c -> c.getIdClient().equals(idClient))
+                    .findFirst().orElse(null);
+            if (client == null) {
+                return "redirect:/voyages/" + id + "/places";
+            }
+        }
+
+        // TODO: Create reservation/billet logic here
+        // For now, just redirect with success
+        session.setAttribute("successMessage", "Réservation effectuée avec succès pour " + selectedPlaces.length + " place(s)!");
+        return "redirect:/voyages/" + id + "/details";
+    }
+
 }

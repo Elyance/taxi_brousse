@@ -2,6 +2,15 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
+<c:if test="${param.success == '1'}">
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <strong>Succès!</strong> Réservation effectuée avec succès.
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+</c:if>
+
 <div class="page-title">Détails du Voyage #${voyage.idVoyage}</div>
 <p class="page-subtitle">Informations complètes et tarifs des places</p>
 
@@ -77,9 +86,9 @@
         <!-- Bouton Acheter Billet -->
         <div class="card mt-3">
             <div class="card-body text-center">
-                <button class="btn btn-success btn-lg w-100" onclick="acheterBillet(${voyage.idVoyage})">
+                <a href="<c:url value='/voyages/${voyage.idVoyage}/places'/>" class="btn btn-success btn-lg w-100">
                     <i class="fas fa-ticket-alt"></i> Acheter un Billet
-                </button>
+                </a>
             </div>
         </div>
     </div>
@@ -92,11 +101,3 @@
         </a>
     </div>
 </div>
-
-<script>
-function acheterBillet(idVoyage) {
-    // Pour l'instant, afficher un message
-    alert('Achat de billet pour le voyage ' + idVoyage + ' - Fonctionnalité à implémenter');
-    // TODO: Rediriger vers la page d'achat
-}
-</script>

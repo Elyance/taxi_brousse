@@ -87,7 +87,7 @@
                                     <a href="<c:url value='/voyages/${voyage.idVoyage}/details'/>" class="btn-action" style="background-color: #6b7280; color: white; text-decoration: none; display: inline-flex; align-items: center; padding: 6px 12px; border-radius: 4px; font-size: 13px; gap: 6px; transition: all 0.3s ease; margin-right: 8px;">
                                         <i class="fas fa-eye"></i> Détails
                                     </a>
-                                    <a href="<c:url value='/voyages/${voyage.idVoyage}/details'/>" class="btn-action" style="background-color: #3b82f6; color: white; text-decoration: none; display: inline-flex; align-items: center; padding: 6px 12px; border-radius: 4px; font-size: 13px; gap: 6px; transition: all 0.3s ease;">
+                                    <a href="<c:url value='/voyages/${voyage.idVoyage}/places'/>" class="btn-action" style="background-color: #3b82f6; color: white; text-decoration: none; display: inline-flex; align-items: center; padding: 6px 12px; border-radius: 4px; font-size: 13px; gap: 6px; transition: all 0.3s ease;">
                                         <i class="fas fa-chair"></i> Acheter Billet
                                     </a>
                                 </div>

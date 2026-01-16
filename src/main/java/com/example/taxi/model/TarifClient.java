@@ -8,44 +8,49 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
+import java.math.BigDecimal;
+
 @Entity
-@Table(name = "client")
-public class Client {
+@Table(name = "tarif_client")
+public class TarifClient {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idClient;
+    private Integer idTarifClient;
 
-    private String nomComplet;
-    private String telephone;
+    private BigDecimal prix;
+
+    @ManyToOne
+    @JoinColumn(name = "id_tarif")
+    private Tarif tarif;
 
     @ManyToOne
     @JoinColumn(name = "id_categorie_client")
     private CategorieClient categorieClient;
 
     // Getters and Setters
-    public Integer getIdClient() {
-        return idClient;
+    public Integer getIdTarifClient() {
+        return idTarifClient;
     }
 
-    public void setIdClient(Integer idClient) {
-        this.idClient = idClient;
+    public void setIdTarifClient(Integer idTarifClient) {
+        this.idTarifClient = idTarifClient;
     }
 
-    public String getNomComplet() {
-        return nomComplet;
+    public BigDecimal getPrix() {
+        return prix;
     }
 
-    public void setNomComplet(String nomComplet) {
-        this.nomComplet = nomComplet;
+    public void setPrix(BigDecimal prix) {
+        this.prix = prix;
     }
 
-    public String getTelephone() {
-        return telephone;
+    public Tarif getTarif() {
+        return tarif;
     }
 
-    public void setTelephone(String telephone) {
-        this.telephone = telephone;
+    public void setTarif(Tarif tarif) {
+        this.tarif = tarif;
     }
 
     public CategorieClient getCategorieClient() {
