@@ -17,10 +17,18 @@ CREATE TABLE billet_statut(
    PRIMARY KEY(id_billet_statut)
 );
 
+CREATE TABLE categorie_client(
+    id_categorie_client SERIAL,
+    libelle VARCHAR(50) NOT NULL,
+    PRIMARY KEY(id_categorie_client)
+);
+
 CREATE TABLE client(
    id_client SERIAL,
    nom_complet VARCHAR(50) NOT NULL,
    telephone VARCHAR(50) NOT NULL,
+   id_categorie_client INT,
+    FOREIGN KEY(id_categorie_client) REFERENCES categorie_client(id_categorie_client),
    PRIMARY KEY(id_client)
 );
 
@@ -69,14 +77,22 @@ CREATE TABLE categorie_place (
     PRIMARY KEY(id_categorie_place)
 );
 
+CREATE TABLE statut_place (
+    id_statut_place SERIAL,
+    libelle VARCHAR(50) NOT NULL,
+    PRIMARY KEY(id_statut_place)
+);
+
 CREATE TABLE place(
    id_place SERIAL,
-   numero INT NOT NULL,
+   numero VARCHAR(10) NOT NULL,
    id_vehicule INT NOT NULL,
    id_categorie_place INT NOT NULL,
+   id_statut_place INT NOT NULL,
    PRIMARY KEY(id_place),
    FOREIGN KEY(id_vehicule) REFERENCES vehicule(id_vehicule),
-   FOREIGN KEY(id_categorie_place) REFERENCES categorie_place(id_categorie_place)
+   FOREIGN KEY(id_categorie_place) REFERENCES categorie_place(id_categorie_place),
+   FOREIGN KEY(id_statut_place) REFERENCES statut_place(id_statut_place)
 );
 
 CREATE TABLE gare(
@@ -118,6 +134,16 @@ CREATE TABLE tarif(
     PRIMARY KEY(id_tarif),
     FOREIGN KEY(id_trajet) REFERENCES trajet(id_trajet),
     FOREIGN KEY(id_categorie_place) REFERENCES categorie_place(id_categorie_place)
+);
+
+CREATE TABLE tarif_client(
+    id_tarif_client SERIAL,
+    prix DECIMAL(15,2) NOT NULL,
+    id_tarif INT NOT NULL,
+    id_categorie_client INT NOT NULL,
+    PRIMARY KEY(id_tarif_client),
+    FOREIGN KEY(id_tarif) REFERENCES tarif(id_tarif),
+    FOREIGN KEY(id_categorie_client) REFERENCES categorie_client(id_categorie_client)
 );
 
 CREATE TABLE voyage_statut(
@@ -182,3 +208,12 @@ CREATE TABLE details_commande(
    FOREIGN KEY(id_commande) REFERENCES commande(id_commande)
 );
 
+CREATE TABLE remise_client(
+   id_remise_client SERIAL,
+   pourcentage_remise DECIMAL(5,2) NOT NULL,
+   id_categorie_client INT NOT NULL,
+   id_categorie_reference INT NOT NULL,
+    PRIMARY KEY(id_remise_client),
+    FOREIGN KEY(id_categorie_client) REFERENCES categorie_client(id_categorie_client),
+    FOREIGN KEY(id_categorie_reference) REFERENCES categorie_client(id_categorie_client)
+);
