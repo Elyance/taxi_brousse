@@ -61,16 +61,17 @@ INSERT INTO tarif (id_tarif, prix, id_trajet, id_categorie_place) VALUES
 -- =========================
 INSERT INTO tarif_client (id_tarif_client, prix, id_tarif, id_categorie_client) VALUES
 -- VIP
-(1, 180000, 1, 1),
-(2, 180000, 1, 2),
+(1, 70000, 1, 1),
+(2, 65000, 1, 2),
 
 -- PREMIUM
-(3, 140000, 2, 1),
-(4, 140000, 2, 2),
+(3, 60000, 2, 1),
+(4, 50000, 2, 2),
+
 
 -- STANDARD
-(5, 90000, 3, 1),
-(6, 50000, 3, 2);
+(5, 50000, 3, 1),
+(6, 40000, 3, 2);
 
 -- =========================
 -- VOYAGE
@@ -99,29 +100,33 @@ INSERT INTO voyage (
 -- VIP
 INSERT INTO place (id_place, numero, id_vehicule, id_categorie_place, id_statut_place) VALUES
 (1, 'V1', 1, 3, 1),
-(2, 'V2', 1, 3, 1);
+(2, 'V2', 1, 3, 1),
+(3, 'V3', 1, 3, 1),
+(4, 'V4', 1, 3, 1),
+(5, 'V5', 1, 3, 1),
+(6, 'V6', 1, 3, 1),
+(7, 'V7', 1, 3, 1),
+(8, 'V8', 1, 3, 1);
 
 -- PREMIUM
 INSERT INTO place VALUES
-(3, 'P1', 1, 2, 1),
-(4, 'P2', 1, 2, 1),
-(5, 'P3', 1, 2, 1),
-(6, 'P4', 1, 2, 1),
-(7, 'P5', 1, 2, 1),
-(8, 'P6', 1, 2, 1);
+(9, 'P1', 1, 2, 1),
+(10, 'P2', 1, 2, 1),
+(11, 'P3', 1, 2, 1),
+(12, 'P4', 1, 2, 1);
 
 -- STANDARD
 INSERT INTO place VALUES
-(9,  'S1',  1, 1, 1),
-(10, 'S2',  1, 1, 1),
-(11, 'S3',  1, 1, 1),
-(12, 'S4',  1, 1, 1),
-(13, 'S5',  1, 1, 1),
-(14, 'S6',  1, 1, 1),
-(15, 'S7',  1, 1, 1),
-(16, 'S8',  1, 1, 1),
-(17, 'S9',  1, 1, 1),
-(18, 'S10', 1, 1, 1);
+(13,  'S1',  1, 1, 1),
+(14, 'S2',  1, 1, 1),
+(15, 'S3',  1, 1, 1),
+(16, 'S4',  1, 1, 1),
+(17, 'S5',  1, 1, 1),
+(18, 'S6',  1, 1, 1),
+(19, 'S7',  1, 1, 1),
+(20, 'S8',  1, 1, 1),
+(21, 'S9',  1, 1, 1);
+
 
 INSERT INTO client (id_client, nom_complet, telephone, id_categorie_client) VALUES
 (1, 'Rakoto Andry', '0341122334', 1),
@@ -133,3 +138,11 @@ INSERT INTO client (id_client, nom_complet, telephone, id_categorie_client) VALU
 (6, 'Lalao Tina', '0336677889', 2),
 (7, 'Mamy Kevin', '0324455661', 2),
 (8, 'Fara Sophie', '0383344556', 2);
+INSERT INTO client (id_client, nom_complet, telephone, id_categorie_client) VALUES
+(9, 'Rasoa Senior', '0332233445', 3),
+(10, 'Rakoto Senior', '0345566778', 3);
+
+
+INSERT INTO remise_client (id_remise_client, pourcentage_remise, id_categorie_client, id_categorie_reference) VALUES
+(1, 20.00, 3, 1); -- Senior
+

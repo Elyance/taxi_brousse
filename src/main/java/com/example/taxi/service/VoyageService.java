@@ -19,6 +19,9 @@ public class VoyageService {
     private CategoriePlaceRepository categoriePlaceRepository;
 
     @Autowired
+    private RemiseClientRepository remiseClientRepository;
+
+    @Autowired
     private PlaceRepository placeRepository;
 
     @Autowired
@@ -76,6 +79,27 @@ public class VoyageService {
         // Sinon retourner le tarif de base
         return tarifBase.getPrix();
     }
+
+    public BigDecimal getPrixForPlaceAndClientAvecRemise(Trajet trajet, CategoriePlace categoriePlace, CategorieClient categorieClient) {
+        BigDecimal prixInitial = getPrixForPlaceAndClient(trajet, categoriePlace, categorieClient);
+
+        if (categorieClient != null) {
+            List<RemiseClient> remiseOpt = remiseClientRepository.findByCategorieClient_IdCategorieClient(categorieClient.getIdCategorieClient());
+            if (!remiseOpt.isEmpty() && remiseOpt.get(0) != null ) {
+                RemiseClient remiseClient = remiseOpt.get(0);
+                BigDecimal prix_ref = getPrixForPlaceAndClient(trajet, categoriePlace, remiseClient.getCategorieReference());
+                if (prix_ref.compareTo(BigDecimal.ZERO) == 0) {
+                    return prixInitial;
+                } 
+                BigDecimal remise = remiseClient.getPourcentageRemise().multiply(prix_ref).divide(BigDecimal.valueOf(100));
+                BigDecimal prix = prix_ref.subtract(remise);  
+                return prix;
+            }
+        }
+
+        return prixInitial;
+    }
+
 
     public BigDecimal getPrixForClient(Tarif tarif, CategorieClient categorieClient) {
         if (categorieClient != null) {

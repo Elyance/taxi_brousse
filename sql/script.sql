@@ -208,3 +208,12 @@ CREATE TABLE details_commande(
    FOREIGN KEY(id_commande) REFERENCES commande(id_commande)
 );
 
+CREATE TABLE remise_client(
+   id_remise_client SERIAL,
+   pourcentage_remise DECIMAL(5,2) NOT NULL,
+   id_categorie_client INT NOT NULL,
+   id_categorie_reference INT NOT NULL,
+    PRIMARY KEY(id_remise_client),
+    FOREIGN KEY(id_categorie_client) REFERENCES categorie_client(id_categorie_client),
+    FOREIGN KEY(id_categorie_reference) REFERENCES categorie_client(id_categorie_client)
+);

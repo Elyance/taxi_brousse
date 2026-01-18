@@ -48,3 +48,7 @@ INSERT INTO categorie_client VALUES
 (2, 'Enfant');
 
 
+INSERT INTO categorie_client VALUES
+(3, 'Senior');
+
+

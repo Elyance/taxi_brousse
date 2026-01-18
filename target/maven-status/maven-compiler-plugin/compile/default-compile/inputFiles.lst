@@ -12,6 +12,7 @@
 /home/elyance/Documents/S5/Mme Baovola/taxi_brousse/src/main/java/com/example/taxi/model/Gare.java
 /home/elyance/Documents/S5/Mme Baovola/taxi_brousse/src/main/java/com/example/taxi/model/Place.java
 /home/elyance/Documents/S5/Mme Baovola/taxi_brousse/src/main/java/com/example/taxi/model/PlaceSummary.java
+/home/elyance/Documents/S5/Mme Baovola/taxi_brousse/src/main/java/com/example/taxi/model/RemiseClient.java
 /home/elyance/Documents/S5/Mme Baovola/taxi_brousse/src/main/java/com/example/taxi/model/StatutPlace.java
 /home/elyance/Documents/S5/Mme Baovola/taxi_brousse/src/main/java/com/example/taxi/model/Tarif.java
 /home/elyance/Documents/S5/Mme Baovola/taxi_brousse/src/main/java/com/example/taxi/model/TarifClient.java
@@ -30,6 +31,7 @@
 /home/elyance/Documents/S5/Mme Baovola/taxi_brousse/src/main/java/com/example/taxi/repository/CategoriePlaceRepository.java
 /home/elyance/Documents/S5/Mme Baovola/taxi_brousse/src/main/java/com/example/taxi/repository/ClientRepository.java
 /home/elyance/Documents/S5/Mme Baovola/taxi_brousse/src/main/java/com/example/taxi/repository/PlaceRepository.java
+/home/elyance/Documents/S5/Mme Baovola/taxi_brousse/src/main/java/com/example/taxi/repository/RemiseClientRepository.java
 /home/elyance/Documents/S5/Mme Baovola/taxi_brousse/src/main/java/com/example/taxi/repository/StatutPlaceRepository.java
 /home/elyance/Documents/S5/Mme Baovola/taxi_brousse/src/main/java/com/example/taxi/repository/TarifClientRepository.java
 /home/elyance/Documents/S5/Mme Baovola/taxi_brousse/src/main/java/com/example/taxi/repository/TarifDetailsRepository.java
