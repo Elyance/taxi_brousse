@@ -293,7 +293,19 @@
             </ul>
         </li>
 
-       
+        <!-- Diffusions -->
+        <li class="sidebar-menu-item">
+            <a href="#" class="sidebar-menu-link" onclick="toggleSubmenu(event)">
+                <span class="sidebar-dropdown-toggle">
+                    <span><i class="fas fa-bullhorn"></i> Diffusions</span>
+                </span>
+            </a>
+            <ul class="sidebar-submenu">
+                <li><a href="<c:url value='/diffusion/list'/>" class="sidebar-submenu-link"><i class="fas fa-list"></i> Liste</a></li>
+                <li><a href="<c:url value='/diffusion/create'/>" class="sidebar-submenu-link"><i class="fas fa-plus"></i> Saisie</a></li>
+            </ul>
+        </li>
+
     </ul>
 
     <!-- Footer -->

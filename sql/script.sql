@@ -217,3 +217,45 @@ CREATE TABLE remise_client(
     FOREIGN KEY(id_categorie_client) REFERENCES categorie_client(id_categorie_client),
     FOREIGN KEY(id_categorie_reference) REFERENCES categorie_client(id_categorie_client)
 );
+
+CREATE TABLE societe(
+   id_societe SERIAL,
+   libelle VARCHAR(100) NOT NULL,
+   PRIMARY KEY(id_societe)
+);
+
+CREATE TABLE tarif_diffusion(
+   id_tarif_diffusion SERIAL,
+   valeur DECIMAL(15,2) NOT NULL,
+   daty TIMESTAMP NOT NULL,
+   PRIMARY KEY(id_tarif_diffusion)
+);
+
+CREATE TABLE diffusion_societe(
+   id_diffusion_societe SERIAL,
+   id_societe INT NOT NULL,
+   daty TIMESTAMP NOT NULL,
+   id_voyage INT NOT NULL,
+   heure_diffusion TIMESTAMP NOT NULL,
+   valeur_diffusion DECIMAL(15,2) NOT NULL,
+   PRIMARY KEY(id_diffusion_societe),
+   FOREIGN KEY(id_societe) REFERENCES societe(id_societe),
+   FOREIGN KEY(id_voyage) REFERENCES voyage(id_voyage)
+
+); 
+CREATE TABLE commande_diffusion(
+   id_commande_diffusion SERIAL,
+   id_societe INT NOT NULL,
+   montant_total DECIMAL(15,2) NOT NULL,
+   PRIMARY KEY(id_commande_diffusion),
+   FOREIGN KEY(id_societe) REFERENCES societe(id_societe)
+);
+
+CREATE TABLE payement (
+   id_payement SERIAL,
+   montant DECIMAL(15,2) NOT NULL,
+   date_payement TIMESTAMP NOT NULL,
+   id_societe INT NOT NULL,
+   PRIMARY KEY(id_payement),
+   FOREIGN KEY(id_societe) REFERENCES societe(id_societe)
+);
