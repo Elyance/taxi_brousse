@@ -42,3 +42,32 @@ SELECT
 FROM tarif t
 JOIN trajet tr ON t.id_trajet = tr.id_trajet
 JOIN categorie_place cp ON t.id_categorie_place = cp.id_categorie_place;
+
+CREATE OR REPLACE VIEW v_diffusion_details AS
+SELECT
+    s.id_societe,
+    s.libelle AS societe_libelle,
+    v.id_voyage,
+    v.date_depart,
+    t.id_trajet,
+    gd.nom AS gare_depart_nom,
+    ga.nom AS gare_arrivee_nom,
+    vh.id_vehicule,
+    vh.immatriculation,
+    dcd.id_detail_commande_diffusion,
+    dcd.heure_diffusion,
+    dcd.nb_diffusion,
+    dcd.prix_diffusion,
+    (dcd.nb_diffusion * dcd.prix_diffusion) AS chiffre_affaire,
+    COALESCE(SUM(pdcd.montant), 0) AS paye,
+    ((dcd.nb_diffusion * dcd.prix_diffusion) - COALESCE(SUM(pdcd.montant), 0)) AS reste
+FROM details_commande_diffusion dcd
+JOIN commande_diffusion cd ON dcd.id_commande_diffusion = cd.id_commande_diffusion
+JOIN societe s ON cd.id_societe = s.id_societe
+JOIN voyage v ON dcd.id_voyage = v.id_voyage
+JOIN trajet t ON v.id_trajet = t.id_trajet
+JOIN gare gd ON t.id_gare_depart = gd.id_gare
+JOIN gare ga ON t.id_gare_arrivee = ga.id_gare
+JOIN vehicule vh ON v.id_vehicule = vh.id_vehicule
+LEFT JOIN payement_detail_commande_diffusion pdcd ON dcd.id_detail_commande_diffusion = pdcd.id_detail_commande_diffusion
+GROUP BY s.id_societe, s.libelle, v.id_voyage, v.date_depart, t.id_trajet, gd.nom, ga.nom, vh.id_vehicule, vh.immatriculation, dcd.id_detail_commande_diffusion, dcd.heure_diffusion, dcd.nb_diffusion, dcd.prix_diffusion;

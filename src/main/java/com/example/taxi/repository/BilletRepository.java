@@ -1,6 +1,7 @@
 package com.example.taxi.repository;
 
 import com.example.taxi.model.Billet;
+import com.example.taxi.model.Voyage;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -26,5 +27,7 @@ public interface BilletRepository extends JpaRepository<Billet, Integer> {
            "LEFT JOIN FETCH p.categoriePlace " +
            "LEFT JOIN FETCH p.statutPlace")
     List<Billet> findAllWithDetails();
+
+    List<Billet> findByVoyage(Voyage voyage);
 
 }

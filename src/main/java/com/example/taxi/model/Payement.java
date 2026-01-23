@@ -7,9 +7,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "payement")
@@ -20,11 +21,12 @@ public class Payement {
     private Integer idPayement;
 
     private BigDecimal montant;
-    private Date datePayement;
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    private LocalDateTime datePayement;
 
     @ManyToOne
-    @JoinColumn(name = "id_societe")
-    private Societe societe;
+    @JoinColumn(name = "id_commande_diffusion")
+    private CommandeDiffusion commandeDiffusion;
 
     // Getters and Setters
     public Integer getIdPayement() {
@@ -43,19 +45,19 @@ public class Payement {
         this.montant = montant;
     }
 
-    public Date getDatePayement() {
+    public LocalDateTime getDatePayement() {
         return datePayement;
     }
 
-    public void setDatePayement(Date datePayement) {
+    public void setDatePayement(LocalDateTime datePayement) {
         this.datePayement = datePayement;
     }
 
-    public Societe getSociete() {
-        return societe;
+    public CommandeDiffusion getCommandeDiffusion() {
+        return commandeDiffusion;
     }
 
-    public void setSociete(Societe societe) {
-        this.societe = societe;
+    public void setCommandeDiffusion(CommandeDiffusion commandeDiffusion) {
+        this.commandeDiffusion = commandeDiffusion;
     }
 }

@@ -231,18 +231,18 @@ CREATE TABLE tarif_diffusion(
    PRIMARY KEY(id_tarif_diffusion)
 );
 
-CREATE TABLE diffusion_societe(
-   id_diffusion_societe SERIAL,
-   id_societe INT NOT NULL,
-   daty TIMESTAMP NOT NULL,
-   id_voyage INT NOT NULL,
-   heure_diffusion TIMESTAMP NOT NULL,
-   valeur_diffusion DECIMAL(15,2) NOT NULL,
-   PRIMARY KEY(id_diffusion_societe),
-   FOREIGN KEY(id_societe) REFERENCES societe(id_societe),
-   FOREIGN KEY(id_voyage) REFERENCES voyage(id_voyage)
+-- CREATE TABLE diffusion_societe(
+--    id_diffusion_societe SERIAL,
+--    id_societe INT NOT NULL,
+--    daty TIMESTAMP NOT NULL,
+--    id_voyage INT NOT NULL,
+--    heure_diffusion TIMESTAMP NOT NULL,
+--    valeur_diffusion DECIMAL(15,2) NOT NULL,
+--    PRIMARY KEY(id_diffusion_societe),
+--    FOREIGN KEY(id_societe) REFERENCES societe(id_societe),
+--    FOREIGN KEY(id_voyage) REFERENCES voyage(id_voyage)
 
-); 
+-- ); 
 CREATE TABLE commande_diffusion(
    id_commande_diffusion SERIAL,
    id_societe INT NOT NULL,
@@ -251,11 +251,35 @@ CREATE TABLE commande_diffusion(
    FOREIGN KEY(id_societe) REFERENCES societe(id_societe)
 );
 
+
+CREATE TABLE details_commande_diffusion(
+   id_detail_commande_diffusion SERIAL,
+   id_commande_diffusion INT NOT NULL,
+   id_voyage INT NOT NULL,
+   heure_diffusion TIMESTAMP NOT NULL,
+   nb_diffusion INT NOT NULL,
+   prix_diffusion DECIMAL(15,2) NOT NULL,  
+   PRIMARY KEY(id_detail_commande_diffusion),
+   FOREIGN KEY(id_commande_diffusion) REFERENCES commande_diffusion(id_commande_diffusion),
+   FOREIGN KEY(id_voyage) REFERENCES voyage(id_voyage)
+);
+
 CREATE TABLE payement (
    id_payement SERIAL,
    montant DECIMAL(15,2) NOT NULL,
+   id_commande_diffusion INT NOT NULL,
    date_payement TIMESTAMP NOT NULL,
-   id_societe INT NOT NULL,
    PRIMARY KEY(id_payement),
-   FOREIGN KEY(id_societe) REFERENCES societe(id_societe)
+   FOREIGN KEY(id_commande_diffusion) REFERENCES commande_diffusion(id_commande_diffusion)
+);
+
+CREATE TABLE payement_detail_commande_diffusion(
+   id_payement_detail_commande_diffusion SERIAL,
+   id_payement INT NOT NULL,
+   id_detail_commande_diffusion INT NOT NULL,
+   montant DECIMAL(15,2) NOT NULL,
+   date_payement TIMESTAMP NOT NULL,
+   PRIMARY KEY(id_payement_detail_commande_diffusion),
+   FOREIGN KEY(id_payement) REFERENCES payement(id_payement),
+   FOREIGN KEY(id_detail_commande_diffusion) REFERENCES details_commande_diffusion(id_detail_commande_diffusion)
 );

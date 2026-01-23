@@ -35,7 +35,7 @@ execute_sql "sql/script.sql"
 execute_sql "sql/base.sql"
 
 # 3. Insérer les données de test
-execute_sql "sql/test_data_complete.sql"
+execute_sql "sql/data.sql"
 
 # 4. Créer les vues
 execute_sql "sql/view.sql"

@@ -3,6 +3,7 @@ package com.example.taxi.model;
 import java.math.BigDecimal;
 
 public class DiffusionSummary {
+
     private Societe societe;
     private long nbDiffusion;
     private BigDecimal chiffreAffaire;
@@ -10,7 +11,6 @@ public class DiffusionSummary {
     private BigDecimal paye;
     private BigDecimal reste;
 
-    // Constructors
     public DiffusionSummary() {}
 
     public DiffusionSummary(Societe societe, long nbDiffusion, BigDecimal chiffreAffaire, BigDecimal prixDiffusion, BigDecimal paye, BigDecimal reste) {

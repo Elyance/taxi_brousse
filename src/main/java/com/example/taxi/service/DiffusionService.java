@@ -1,13 +1,9 @@
 package com.example.taxi.service;
 
-import com.example.taxi.model.DiffusionSociete;
+import com.example.taxi.model.VDiffusionDetails;
 import com.example.taxi.model.DiffusionSummary;
-import com.example.taxi.model.Payement;
 import com.example.taxi.model.Societe;
-import com.example.taxi.model.TarifDiffusion;
-import com.example.taxi.repository.DiffusionSocieteRepository;
-import com.example.taxi.repository.PayementRepository;
-import com.example.taxi.repository.TarifDiffusionRepository;
+import com.example.taxi.repository.VDiffusionDetailsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,42 +17,40 @@ import java.util.Map;
 public class DiffusionService {
 
     @Autowired
-    private DiffusionSocieteRepository diffusionSocieteRepository;
-
-    @Autowired
-    private TarifDiffusionRepository tarifDiffusionRepository;
-
-    @Autowired
-    private PayementRepository payementRepository;
-
-    public List<DiffusionSociete> getAll() {
-        return diffusionSocieteRepository.findAll();
-    }
+    private VDiffusionDetailsRepository vDiffusionDetailsRepository;
 
     public List<DiffusionSummary> getDiffusionSummaries(Integer idSociete, Integer month, Integer year, Integer idTrajet, Integer idVehicule) {
-        List<DiffusionSociete> diffusions = diffusionSocieteRepository.findFiltered(idSociete, month, year, idTrajet, idVehicule);
-        TarifDiffusion tarif = tarifDiffusionRepository.findById(1).orElse(null); // Assuming id=1
-        BigDecimal prixDiffusion = tarif != null ? tarif.getValeur() : BigDecimal.ZERO;
+        List<VDiffusionDetails> details = vDiffusionDetailsRepository.findFiltered(idSociete, month, year, idTrajet, idVehicule);
 
-        Map<Societe, List<DiffusionSociete>> grouped = new HashMap<>();
-        for (DiffusionSociete d : diffusions) {
-            grouped.computeIfAbsent(d.getSociete(), k -> new ArrayList<>()).add(d);
-        }
+        // Group by societe
+        Map<Integer, Societe> societeMap = new HashMap<>();
+        Map<Integer, Long> nbDiffusionMap = new HashMap<>();
+        Map<Integer, BigDecimal> caMap = new HashMap<>();
+        Map<Integer, BigDecimal> payeMap = new HashMap<>();
+        Map<Integer, BigDecimal> prixDiffusionMap = new HashMap<>();
 
-        // Calculate payments per société
-        List<Payement> payements = payementRepository.findAll();
-        Map<Societe, BigDecimal> payeMap = new HashMap<>();
-        for (Payement p : payements) {
-            payeMap.merge(p.getSociete(), p.getMontant(), BigDecimal::add);
+        for (VDiffusionDetails d : details) {
+            Integer societeId = d.getIdSociete();
+            Societe societe = societeMap.computeIfAbsent(societeId, k -> {
+                Societe s = new Societe();
+                s.setIdSociete(societeId);
+                s.setLibelle(d.getSocieteLibelle());
+                return s;
+            });
+            nbDiffusionMap.merge(societeId, d.getNbDiffusion().longValue(), Long::sum);
+            caMap.merge(societeId, d.getChiffreAffaire(), BigDecimal::add);
+            payeMap.merge(societeId, d.getPaye(), BigDecimal::add);
+            // Prix diffusion, take the first one
+            prixDiffusionMap.putIfAbsent(societeId, d.getPrixDiffusion());
         }
 
         List<DiffusionSummary> summaries = new ArrayList<>();
-        for (Map.Entry<Societe, List<DiffusionSociete>> entry : grouped.entrySet()) {
-            Societe societe = entry.getKey();
-            List<DiffusionSociete> societeDiffusions = entry.getValue();
-            long nbDiffusion = societeDiffusions.size();
-            BigDecimal ca = prixDiffusion.multiply(BigDecimal.valueOf(nbDiffusion));
-            BigDecimal paye = payeMap.getOrDefault(societe, BigDecimal.ZERO);
+        for (Integer societeId : societeMap.keySet()) {
+            Societe societe = societeMap.get(societeId);
+            Long nbDiffusion = nbDiffusionMap.get(societeId);
+            BigDecimal ca = caMap.get(societeId);
+            BigDecimal paye = payeMap.get(societeId);
+            BigDecimal prixDiffusion = prixDiffusionMap.get(societeId);
             BigDecimal reste = ca.subtract(paye);
             summaries.add(new DiffusionSummary(societe, nbDiffusion, ca, prixDiffusion, paye, reste));
         }

@@ -18,6 +18,17 @@
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">Liste des Diffusions</h3>
+                    <div class="card-tools">
+                        <a href="<c:url value='/diffusion/payement'/>" class="btn btn-primary btn-sm">
+                            <i class="fas fa-plus"></i> Ajouter un Paiement
+                        </a>
+                        <a href="<c:url value='/diffusion/payments'/>" class="btn btn-info btn-sm">
+                            <i class="fas fa-list"></i> Liste des Paiements
+                        </a>
+                        <a href="<c:url value='/diffusion/commandes'/>" class="btn btn-warning btn-sm">
+                            <i class="fas fa-shopping-cart"></i> Liste des Commandes
+                        </a>
+                    </div>
                 </div>
 
                 <!-- Filter Form -->

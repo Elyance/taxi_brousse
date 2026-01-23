@@ -303,10 +303,27 @@
             <ul class="sidebar-submenu">
                 <li><a href="<c:url value='/diffusion/list'/>" class="sidebar-submenu-link"><i class="fas fa-list"></i> Liste</a></li>
                 <li><a href="<c:url value='/diffusion/create'/>" class="sidebar-submenu-link"><i class="fas fa-plus"></i> Saisie</a></li>
+                <li><a href="<c:url value='/diffusion/commandes'/>" class="sidebar-submenu-link"><i class="fas fa-plus"></i> Commandes</a></li>
+                <li><a href="<c:url value='/diffusion/voyages-summary'/>" class="sidebar-submenu-link"><i class="fas fa-chart-bar"></i> Résumé Voyages</a></li>
+
+            </ul>
+        </li>
+
+        <!-- Paiements -->
+        <li class="sidebar-menu-item">
+            <a href="#" class="sidebar-menu-link" onclick="toggleSubmenu(event)">
+                <span class="sidebar-dropdown-toggle">
+                    <span><i class="fas fa-plane"></i> Paiements de diffusions </span>
+                </span>
+            </a>
+            <ul class="sidebar-submenu">
+                <li><a href="<c:url value='/diffusion/payments'/>" class="sidebar-submenu-link"><i class="fas fa-list"></i> Liste</a></li>
+                <li><a href="<c:url value='/diffusion/payement'/>" class="sidebar-submenu-link"><i class="fas fa-plus"></i> Saisie</a></li>
             </ul>
         </li>
 
     </ul>
+    
 
     <!-- Footer -->
     <div class="sidebar-footer">
