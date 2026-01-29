@@ -284,7 +284,7 @@ CREATE TABLE payement_detail_commande_diffusion(
    FOREIGN KEY(id_detail_commande_diffusion) REFERENCES details_commande_diffusion(id_detail_commande_diffusion)
 );
 
-CREATE TABLE Produit (
+CREATE TABLE produit (
     id_produit SERIAL,
     libelle VARCHAR(100) NOT NULL,
     prix DECIMAL(15,2) NOT NULL,
@@ -292,7 +292,7 @@ CREATE TABLE Produit (
     PRIMARY KEY(id_produit)
 );
 
-CREATE TABLE Commande_Produit (
+CREATE TABLE commande_produit (
     id_commande_produit SERIAL,
     id_client INT NOT NULL,
     montant_total DECIMAL(15,2) NOT NULL,
@@ -301,25 +301,25 @@ CREATE TABLE Commande_Produit (
     FOREIGN KEY(id_client) REFERENCES client(id_client)
 );
 
-CREATE TABLE Details_Commande_Produit (
+CREATE TABLE details_commande_produit (
     id_detail_commande_produit SERIAL,
     id_commande_produit INT NOT NULL,
     id_produit INT NOT NULL,
     quantity INT NOT NULL,
     id_voyage INT NOT NULL,
     PRIMARY KEY(id_detail_commande_produit),
-    FOREIGN KEY(id_commande_produit) REFERENCES Commande_Produit(id_commande_produit),
-    FOREIGN KEY(id_produit) REFERENCES Produit(id_produit),
+    FOREIGN KEY(id_commande_produit) REFERENCES commande_produit(id_commande_produit),
+    FOREIGN KEY(id_produit) REFERENCES produit(id_produit),
     FOREIGN KEY(id_voyage) REFERENCES voyage(id_voyage)
 );
 
-CREATE TABLE Paiement_Commande_Produit (
+CREATE TABLE paiement_commande_produit (
     id_paiement_commande_produit SERIAL,
     id_commande_produit INT NOT NULL,
     montant DECIMAL(15,2) NOT NULL,
     date_paiement TIMESTAMP NOT NULL,
     PRIMARY KEY(id_paiement_commande_produit),
-    FOREIGN KEY(id_commande_produit) REFERENCES Commande_Produit(id_commande_produit)
+    FOREIGN KEY(id_commande_produit) REFERENCES commande_produit(id_commande_produit)
 );
 
 

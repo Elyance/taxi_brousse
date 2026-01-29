@@ -552,3 +552,23 @@ INSERT INTO tarif_diffusion (id_tarif_diffusion, valeur, daty) VALUES
 -- =========================
 -- INSERT INTO payement (montant, date_payement, id_societe) VALUES
 -- (200000.00, '2026-12-15 00:00:00', 2);
+
+-- ...existing code...
+
+-- Produits
+INSERT INTO produit (libelle, prix, quantity) VALUES
+('Boisson gazeuse 500ml', 5000, 100);
+
+
+-- Commandes produit (montant_total calculé manuellement ci-dessous)
+INSERT INTO commande_produit (id_client, montant_total, date_commande) VALUES
+(1, 500000, '2026-01-20');
+
+-- Détails des commandes (référence aux produits créés ci-dessus et à id_voyage = 1)
+INSERT INTO details_commande_produit (id_commande_produit, id_produit, quantity, id_voyage) VALUES
+(1, 1, 100, 1);
+
+-- Paiements pour les commandes produit
+INSERT INTO paiement_commande_produit (id_commande_produit, montant, date_paiement) VALUES
+(1, 500000, '2026-01-20');-- paiement partiel commande 2
+
