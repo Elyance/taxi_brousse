@@ -43,51 +43,51 @@
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td>Diffusion</td>
-                                            <td>
-                                                <fmt:formatNumber value="${summary.montantDiffusion}" type="currency" currencySymbol="Ar" maxFractionDigits="0"/>
-                                            </td>
-                                            <td>
-                                                <c:if test="${summary.totalChiffreAffaire.compareTo(BigDecimal.ZERO) > 0}">
-                                                    <fmt:formatNumber value="${summary.montantDiffusion.divide(summary.totalChiffreAffaire, 4, java.math.RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100))}" maxFractionDigits="2"/>%
-                                                </c:if>
-                                                <c:if test="${summary.totalChiffreAffaire.compareTo(BigDecimal.ZERO) == 0}">
-                                                    0.00%
-                                                </c:if>
-                                            </td>
-                                        </tr>
-                                        <tr>
                                             <td>Billet</td>
                                             <td>
-                                                <fmt:formatNumber value="${summary.montantBillet}" type="currency" currencySymbol="Ar" maxFractionDigits="0"/>
+                                                <fmt:formatNumber value="${summary.montantBillet != null ? summary.montantBillet : 0}" type="currency" currencySymbol="Ar" maxFractionDigits="0"/>
                                             </td>
                                             <td>
-                                                <c:if test="${summary.totalChiffreAffaire.compareTo(BigDecimal.ZERO) > 0}">
-                                                    <fmt:formatNumber value="${summary.montantBillet.divide(summary.totalChiffreAffaire, 4, java.math.RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100))}" maxFractionDigits="2"/>%
-                                                </c:if>
-                                                <c:if test="${summary.totalChiffreAffaire.compareTo(BigDecimal.ZERO) == 0}">
-                                                    0.00%
-                                                </c:if>
+                                                <c:choose>
+                                                    <c:when test="${summary.totalChiffreAffaire != null && summary.totalChiffreAffaire > 0}">
+                                                        <fmt:formatNumber value="${(summary.montantBillet != null ? summary.montantBillet : 0) / summary.totalChiffreAffaire * 100}" maxFractionDigits="2"/>%
+                                                    </c:when>
+                                                    <c:otherwise>0.00%</c:otherwise>
+                                                </c:choose>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td>Produit-Extra</td>
                                             <td>
-                                                <fmt:formatNumber value="${summary.montantProduit}" type="currency" currencySymbol="Ar" maxFractionDigits="0"/>
+                                                <fmt:formatNumber value="${summary.montantProduit != null ? summary.montantProduit : 0}" type="currency" currencySymbol="Ar" maxFractionDigits="0"/>
                                             </td>
                                             <td>
-                                                <c:if test="${summary.totalChiffreAffaire.compareTo(BigDecimal.ZERO) > 0}">
-                                                    <fmt:formatNumber value="${summary.montantProduit.divide(summary.totalChiffreAffaire, 4, java.math.RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100))}" maxFractionDigits="2"/>%
-                                                </c:if>
-                                                <c:if test="${summary.totalChiffreAffaire.compareTo(BigDecimal.ZERO) == 0}">
-                                                    0.00%
-                                                </c:if>
+                                                <c:choose>
+                                                    <c:when test="${summary.totalChiffreAffaire != null && summary.totalChiffreAffaire > 0}">
+                                                        <fmt:formatNumber value="${(summary.montantProduit != null ? summary.montantProduit : 0) / summary.totalChiffreAffaire * 100}" maxFractionDigits="2"/>%
+                                                    </c:when>
+                                                    <c:otherwise>0.00%</c:otherwise>
+                                                </c:choose>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Diffusion</td>
+                                            <td>
+                                                <fmt:formatNumber value="${summary.montantDiffusion != null ? summary.montantDiffusion : 0}" type="currency" currencySymbol="Ar" maxFractionDigits="0"/>
+                                            </td>
+                                            <td>
+                                                <c:choose>
+                                                    <c:when test="${summary.totalChiffreAffaire != null && summary.totalChiffreAffaire > 0}">
+                                                        <fmt:formatNumber value="${(summary.montantDiffusion != null ? summary.montantDiffusion : 0) / summary.totalChiffreAffaire * 100}" maxFractionDigits="2"/>%
+                                                    </c:when>
+                                                    <c:otherwise>0.00%</c:otherwise>
+                                                </c:choose>
                                             </td>
                                         </tr>
                                         <tr class="table-primary font-weight-bold">
                                             <td><strong>Total</strong></td>
                                             <td>
-                                                <strong><fmt:formatNumber value="${summary.totalChiffreAffaire}" type="currency" currencySymbol="Ar" maxFractionDigits="0"/></strong>
+                                                <strong><fmt:formatNumber value="${summary.totalChiffreAffaire != null ? summary.totalChiffreAffaire : 0}" type="currency" currencySymbol="Ar" maxFractionDigits="0"/></strong>
                                             </td>
                                             <td><strong>100.00%</strong></td>
                                         </tr>
