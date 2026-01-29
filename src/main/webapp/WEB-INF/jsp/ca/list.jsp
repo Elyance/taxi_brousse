@@ -33,65 +33,63 @@
                     <div class="row mb-4">
                         <div class="col-12">
                             <div class="table-responsive">
-                                <table class="table table-bordered table-striped">
+                                <table class="table table-bordered table-hover">
                                     <thead class="thead-dark">
                                         <tr>
                                             <th>Source</th>
-                                            <th>Chiffre d'Affaire</th>
-                                            <th>Pourcentage</th>
+                                            <th>Nombre</th>
+                                            <th class="text-right">Chiffre d'Affaire</th>
+                                            <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td>Billet</td>
-                                            <td>
-                                                <fmt:formatNumber value="${summary.montantBillet != null ? summary.montantBillet : 0}" type="currency" currencySymbol="Ar" maxFractionDigits="0"/>
+                                            <td><i class="fas fa-ticket-alt mr-2"></i>Billet</td>
+                                            <td>${summary.nombreBillets != null ? summary.nombreBillets : 0}</td>
+                                            <td class="text-right">
+                                                <fmt:formatNumber value="${summary.montantBillet != null ? summary.montantBillet : 0}" type="number" maxFractionDigits="0"/> Ar
                                             </td>
                                             <td>
-                                                <c:choose>
-                                                    <c:when test="${summary.totalChiffreAffaire != null && summary.totalChiffreAffaire > 0}">
-                                                        <fmt:formatNumber value="${(summary.montantBillet != null ? summary.montantBillet : 0) / summary.totalChiffreAffaire * 100}" maxFractionDigits="2"/>%
-                                                    </c:when>
-                                                    <c:otherwise>0.00%</c:otherwise>
-                                                </c:choose>
+                                                <a href="<c:url value='/billet/list'/>?dateDebut=${param.dateDebut}&dateFin=${param.dateFin}" class="btn btn-sm btn-info">
+                                                    <i class="fas fa-eye"></i> Détails
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        <tr style="cursor: pointer;" onclick="window.location='<c:url value='/ca/produits'/>?dateDebut=${param.dateDebut}&dateFin=${param.dateFin}'">
+                                            <td><i class="fas fa-box mr-2"></i>Produit-Extra</td>
+                                            <td>${summary.nombreCommandesProduit != null ? summary.nombreCommandesProduit : 0}</td>
+                                            <td class="text-right">
+                                                <fmt:formatNumber value="${summary.montantProduit != null ? summary.montantProduit : 0}" type="number" maxFractionDigits="0"/> Ar
+                                            </td>
+                                            <td>
+                                                <a href="<c:url value='/ca/produits'/>?dateDebut=${param.dateDebut}&dateFin=${param.dateFin}" class="btn btn-sm btn-info">
+                                                    <i class="fas fa-eye"></i> Détails
+                                                </a>
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td>Produit-Extra</td>
-                                            <td>
-                                                <fmt:formatNumber value="${summary.montantProduit != null ? summary.montantProduit : 0}" type="currency" currencySymbol="Ar" maxFractionDigits="0"/>
+                                            <td><i class="fas fa-bullhorn mr-2"></i>Diffusion</td>
+                                            <td>${summary.nombreDiffusions != null ? summary.nombreDiffusions : 0}</td>
+                                            <td class="text-right">
+                                                <fmt:formatNumber value="${summary.montantDiffusion != null ? summary.montantDiffusion : 0}" type="number" maxFractionDigits="0"/> Ar
                                             </td>
                                             <td>
-                                                <c:choose>
-                                                    <c:when test="${summary.totalChiffreAffaire != null && summary.totalChiffreAffaire > 0}">
-                                                        <fmt:formatNumber value="${(summary.montantProduit != null ? summary.montantProduit : 0) / summary.totalChiffreAffaire * 100}" maxFractionDigits="2"/>%
-                                                    </c:when>
-                                                    <c:otherwise>0.00%</c:otherwise>
-                                                </c:choose>
+                                                <a href="<c:url value='/diffusion/list'/>?dateDebut=${param.dateDebut}&dateFin=${param.dateFin}" class="btn btn-sm btn-info">
+                                                    <i class="fas fa-eye"></i> Détails
+                                                </a>
                                             </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Diffusion</td>
-                                            <td>
-                                                <fmt:formatNumber value="${summary.montantDiffusion != null ? summary.montantDiffusion : 0}" type="currency" currencySymbol="Ar" maxFractionDigits="0"/>
-                                            </td>
-                                            <td>
-                                                <c:choose>
-                                                    <c:when test="${summary.totalChiffreAffaire != null && summary.totalChiffreAffaire > 0}">
-                                                        <fmt:formatNumber value="${(summary.montantDiffusion != null ? summary.montantDiffusion : 0) / summary.totalChiffreAffaire * 100}" maxFractionDigits="2"/>%
-                                                    </c:when>
-                                                    <c:otherwise>0.00%</c:otherwise>
-                                                </c:choose>
-                                            </td>
-                                        </tr>
-                                        <tr class="table-primary font-weight-bold">
-                                            <td><strong>Total</strong></td>
-                                            <td>
-                                                <strong><fmt:formatNumber value="${summary.totalChiffreAffaire != null ? summary.totalChiffreAffaire : 0}" type="currency" currencySymbol="Ar" maxFractionDigits="0"/></strong>
-                                            </td>
-                                            <td><strong>100.00%</strong></td>
                                         </tr>
                                     </tbody>
+                                    <tfoot>
+                                        <tr class="bg-success text-white" style="font-size: 1.2em;">
+                                            <td><strong><i class="fas fa-calculator mr-2"></i>TOTAL</strong></td>
+                                            <td><strong>${(summary.nombreBillets != null ? summary.nombreBillets : 0) + (summary.nombreCommandesProduit != null ? summary.nombreCommandesProduit : 0) + (summary.nombreDiffusions != null ? summary.nombreDiffusions : 0)}</strong></td>
+                                            <td class="text-right">
+                                                <strong><fmt:formatNumber value="${summary.totalChiffreAffaire != null ? summary.totalChiffreAffaire : 0}" type="number" maxFractionDigits="0"/> Ar</strong>
+                                            </td>
+                                            <td></td>
+                                        </tr>
+                                    </tfoot>
                                 </table>
                             </div>
                         </div>

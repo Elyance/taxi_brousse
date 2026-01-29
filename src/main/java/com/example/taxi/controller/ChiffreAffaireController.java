@@ -29,6 +29,9 @@ public class ChiffreAffaireController {
         private BigDecimal montantBillet;
         private BigDecimal montantDiffusion;
         private BigDecimal totalChiffreAffaire;
+        private Integer nombreBillets;
+        private Integer nombreCommandesProduit;
+        private Integer nombreDiffusions;
 
         // Getters and setters
         public BigDecimal getMontantProduit() { return montantProduit; }
@@ -42,6 +45,15 @@ public class ChiffreAffaireController {
 
         public BigDecimal getTotalChiffreAffaire() { return totalChiffreAffaire; }
         public void setTotalChiffreAffaire(BigDecimal totalChiffreAffaire) { this.totalChiffreAffaire = totalChiffreAffaire; }
+
+        public Integer getNombreBillets() { return nombreBillets; }
+        public void setNombreBillets(Integer nombreBillets) { this.nombreBillets = nombreBillets; }
+
+        public Integer getNombreCommandesProduit() { return nombreCommandesProduit; }
+        public void setNombreCommandesProduit(Integer nombreCommandesProduit) { this.nombreCommandesProduit = nombreCommandesProduit; }
+
+        public Integer getNombreDiffusions() { return nombreDiffusions; }
+        public void setNombreDiffusions(Integer nombreDiffusions) { this.nombreDiffusions = nombreDiffusions; }
     }
 
     @Autowired
@@ -52,6 +64,9 @@ public class ChiffreAffaireController {
 
     @Autowired
     private DetailsCommandeDiffusionRepository detailsCommandeDiffusionRepository;
+
+    @Autowired
+    private DetailsCommandeProduitRepository detailsCommandeProduitRepository;
 
     @Autowired
     private VoyageService voyageService;
@@ -103,8 +118,10 @@ public class ChiffreAffaireController {
         // Somme des montants des commandes produit (toutes, pas seulement payées)
         montantProduit = commandesProduit.stream()
                 .map(CommandeProduit::getMontantTotal)
+                .filter(m -> m != null)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         summary.setMontantProduit(montantProduit);
+        summary.setNombreCommandesProduit(commandesProduit.size());
 
         // 2. Montant Billet-Total
         BigDecimal montantBillet = BigDecimal.ZERO;
@@ -150,8 +167,10 @@ public class ChiffreAffaireController {
 
         montantBillet = billets.stream()
                 .map(Billet::getMontantTotal)
+                .filter(m -> m != null)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         summary.setMontantBillet(montantBillet);
+        summary.setNombreBillets(billets.size());
 
         // 3. Montant Diffusion
         BigDecimal montantDiffusion = BigDecimal.ZERO;
@@ -196,9 +215,10 @@ public class ChiffreAffaireController {
         }
 
         montantDiffusion = detailsDiffusion.stream()
-                .map(d -> d.getPrixDiffusion().multiply(BigDecimal.valueOf(d.getNbDiffusion())))
+                .map(d -> d.getPrixDiffusion() != null ? d.getPrixDiffusion().multiply(BigDecimal.valueOf(d.getNbDiffusion())) : BigDecimal.ZERO)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         summary.setMontantDiffusion(montantDiffusion);
+        summary.setNombreDiffusions(detailsDiffusion.size());
 
         // Total Chiffre d'Affaire
         BigDecimal totalCA = montantProduit.add(montantBillet).add(montantDiffusion);
@@ -207,6 +227,71 @@ public class ChiffreAffaireController {
         model.addAttribute("summary", summary);
         model.addAttribute("pageTitle", "Chiffres d'Affaires");
         model.addAttribute("contentPage", "/WEB-INF/jsp/ca/list.jsp");
+        return "includes/layout";
+    }
+
+    @GetMapping("/produits")
+    public String detailsProduits(HttpSession session, Model model,
+                                   @RequestParam(required = false) String dateDebut,
+                                   @RequestParam(required = false) String dateFin) {
+        if (session.getAttribute("admin") == null) {
+            return "redirect:/admin/login";
+        }
+
+        List<CommandeProduit> commandesProduit = commandeProduitRepository.findAll();
+
+        // Appliquer filtre date sur commandes produit
+        if (dateDebut != null && !dateDebut.isEmpty()) {
+            try {
+                LocalDate debut = LocalDate.parse(dateDebut);
+                commandesProduit = commandesProduit.stream()
+                        .filter(cp -> {
+                            LocalDate commandeDate = cp.getDateCommande().toLocalDate();
+                            return commandeDate.isEqual(debut) || commandeDate.isAfter(debut);
+                        })
+                        .collect(Collectors.toList());
+            } catch (Exception e) {
+                // Ignore invalid date format
+            }
+        }
+
+        if (dateFin != null && !dateFin.isEmpty()) {
+            try {
+                LocalDate fin = LocalDate.parse(dateFin);
+                commandesProduit = commandesProduit.stream()
+                        .filter(cp -> {
+                            LocalDate commandeDate = cp.getDateCommande().toLocalDate();
+                            return commandeDate.isEqual(fin) || commandeDate.isBefore(fin);
+                        })
+                        .collect(Collectors.toList());
+            } catch (Exception e) {
+                // Ignore invalid date format
+            }
+        }
+
+        // Calculer le total
+        BigDecimal totalMontant = commandesProduit.stream()
+                .map(CommandeProduit::getMontantTotal)
+                .filter(m -> m != null)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        // Récupérer les IDs des commandes filtrées
+        List<Integer> commandeIds = commandesProduit.stream()
+                .map(CommandeProduit::getIdCommandeProduit)
+                .collect(Collectors.toList());
+
+        // Récupérer les détails des commandes
+        List<DetailsCommandeProduit> detailsCommandes = detailsCommandeProduitRepository.findAll().stream()
+                .filter(d -> d.getCommandeProduit() != null && commandeIds.contains(d.getCommandeProduit().getIdCommandeProduit()))
+                .collect(Collectors.toList());
+
+        model.addAttribute("detailsCommandes", detailsCommandes);
+        model.addAttribute("commandesProduit", commandesProduit);
+        model.addAttribute("totalMontant", totalMontant);
+        model.addAttribute("dateDebut", dateDebut);
+        model.addAttribute("dateFin", dateFin);
+        model.addAttribute("pageTitle", "Détails Commandes Produit-Extra");
+        model.addAttribute("contentPage", "/WEB-INF/jsp/ca/produits.jsp");
         return "includes/layout";
     }
 }
