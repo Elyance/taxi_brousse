@@ -28,13 +28,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -163,7 +160,7 @@ public class DiffusionController {
             .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         // Calculer le pourcentage payé par ce paiement
-        BigDecimal pourcentagePaye = savedPayement.getMontant().divide(montantTotalCommande, 4, BigDecimal.ROUND_HALF_UP);
+        BigDecimal pourcentagePaye = savedPayement.getMontant().divide(montantTotalCommande, 4, java.math.RoundingMode.HALF_UP);
 
         // Répartir le paiement sur chaque détail de commande
         for (DetailsCommandeDiffusion detail : commande.getDetailsCommandeDiffusions()) {
@@ -291,7 +288,7 @@ public class DiffusionController {
                 .map(PayementDetailCommandeDiffusion::getMontant)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
             BigDecimal reste = total.subtract(paye);
-            BigDecimal pourcentage = total.compareTo(BigDecimal.ZERO) > 0 ? paye.divide(total, 4, BigDecimal.ROUND_HALF_UP) : BigDecimal.ZERO;
+            BigDecimal pourcentage = total.compareTo(BigDecimal.ZERO) > 0 ? paye.divide(total, 4, java.math.RoundingMode.HALF_UP) : BigDecimal.ZERO;
 
             payeMap.put(d.getIdDetailCommandeDiffusion(), paye);
             resteMap.put(d.getIdDetailCommandeDiffusion(), reste);
@@ -309,12 +306,44 @@ public class DiffusionController {
     }
 
     @GetMapping("/voyages-summary")
-    public String voyagesSummary(HttpSession session, Model model) {
+    public String voyagesSummary(HttpSession session, Model model,
+                                 @RequestParam(required = false) String dateDebut,
+                                 @RequestParam(required = false) String dateFin) {
         if (session.getAttribute("admin") == null) {
             return "redirect:/admin/login";
         }
 
         List<Voyage> voyages = voyageService.getAllVoyages();
+
+        // Appliquer les filtres de date
+        if (dateDebut != null && !dateDebut.isEmpty()) {
+            try {
+                LocalDate debut = LocalDate.parse(dateDebut);
+                voyages = voyages.stream()
+                        .filter(v -> {
+                            LocalDate voyageDate = v.getDateDepart().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                            return voyageDate.isEqual(debut) || voyageDate.isAfter(debut);
+                        })
+                        .collect(Collectors.toList());
+            } catch (Exception e) {
+                // Ignore invalid date format
+            }
+        }
+
+        if (dateFin != null && !dateFin.isEmpty()) {
+            try {
+                LocalDate fin = LocalDate.parse(dateFin);
+                voyages = voyages.stream()
+                        .filter(v -> {
+                            LocalDate voyageDate = v.getDateDepart().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                            return voyageDate.isEqual(fin) || voyageDate.isBefore(fin);
+                        })
+                        .collect(Collectors.toList());
+            } catch (Exception e) {
+                // Ignore invalid date format
+            }
+        }
+
         List<VoyageSummary> summaries = new ArrayList<>();
 
         for (Voyage v : voyages) {

@@ -16,6 +16,24 @@
                 </div>
 
                 <div class="card-body">
+                    <!-- Filtre par date -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <form method="get" action="<c:url value='/diffusion/voyages-summary'/>" class="form-inline">
+                                <div class="form-group mr-3">
+                                    <label for="dateDebut" class="mr-2">Date début:</label>
+                                    <input type="date" class="form-control" id="dateDebut" name="dateDebut" value="${param.dateDebut}">
+                                </div>
+                                <div class="form-group mr-3">
+                                    <label for="dateFin" class="mr-2">Date fin:</label>
+                                    <input type="date" class="form-control" id="dateFin" name="dateFin" value="${param.dateFin}">
+                                </div>
+                                <button type="submit" class="btn btn-primary mr-2">Filtrer</button>
+                                <a href="<c:url value='/diffusion/voyages-summary'/>" class="btn btn-secondary">Réinitialiser</a>
+                            </form>
+                        </div>
+                    </div>
+
                     <!-- Résumé général -->
                     <div class="row mb-4">
                         <div class="col-md-2">
